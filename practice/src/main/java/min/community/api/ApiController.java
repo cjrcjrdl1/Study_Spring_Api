@@ -9,6 +9,9 @@ import min.community.service.MemberService;
 import min.community.service.PostsService;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
 @RequiredArgsConstructor
 @RestController
 public class ApiController {
@@ -44,5 +47,15 @@ public class ApiController {
         memberService.update(id, request.getPw());
         Member findMember = memberService.findOne(id);
         return new MemberUpdateResponseDto(findMember.getId(), findMember.getPw());
+    }
+
+    @GetMapping("/api/members")
+    public Result memberList() {
+        List<Member> findMembers = memberService.findMembers();
+        List<MemberDto> collect = findMembers.stream()
+                .map(m -> new MemberDto(m.getName()))
+                .collect(Collectors.toList());
+
+        return new Result(collect);
     }
 }
