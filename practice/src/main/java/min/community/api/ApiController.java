@@ -4,15 +4,10 @@ import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import min.community.dao.Member;
 import min.community.dao.Posts;
-import min.community.dto.MemberRequestDto;
-import min.community.dto.MemberResponseDto;
-import min.community.dto.PostsRequestDto;
-import min.community.dto.PostsResponseDto;
+import min.community.dto.*;
 import min.community.service.MemberService;
 import min.community.service.PostsService;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RequiredArgsConstructor
 @RestController
@@ -41,5 +36,13 @@ public class ApiController {
         Long id = postsService.upload(posts);
 
         return new PostsResponseDto(id);
+    }
+
+    @PutMapping("/api/members/{id}")
+    public MemberUpdateResponseDto updateMember(@PathVariable("id") Long id,
+                                                @RequestBody @Valid MemberUpdateRequestDto request) {
+        memberService.update(id, request.getPw());
+        Member findMember = memberService.findOne(id);
+        return new MemberUpdateResponseDto(findMember.getId(), findMember.getPw());
     }
 }
