@@ -2,9 +2,11 @@ package min.community.api;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import min.community.dao.Item;
 import min.community.dao.Member;
 import min.community.dao.Posts;
 import min.community.dto.*;
+import min.community.service.ItemService;
 import min.community.service.MemberService;
 import min.community.service.PostsService;
 import org.springframework.web.bind.annotation.*;
@@ -18,6 +20,8 @@ public class ApiController {
 
     private final MemberService memberService;
     private final PostsService postsService;
+
+    private final ItemService itemService;
 
     @PostMapping("/api/members")
     public MemberResponseDto save(@RequestBody @Valid MemberRequestDto request) {
@@ -41,6 +45,17 @@ public class ApiController {
         return new PostsResponseDto(id);
     }
 
+    @PostMapping("/api/item")
+    public ItemResponseDto createItem(@RequestBody @Valid ItemRequestDto request) {
+        Item item = new Item();
+        item.setItemName(request.getItemName());
+        item.setItemQuantity(request.getItemQuantity());
+
+        Long id = itemService.createItem(item);
+
+        return new ItemResponseDto(id);
+    }
+
     @PutMapping("/api/members/{id}")
     public MemberUpdateResponseDto updateMember(@PathVariable("id") Long id,
                                                 @RequestBody @Valid MemberUpdateRequestDto request) {
@@ -58,4 +73,6 @@ public class ApiController {
 
         return new Result(collect);
     }
+
+
 }
